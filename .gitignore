@@ -1,0 +1,13 @@
+*.pyc
+*.swp
+env/
+protweet/protweet/media/
+.gitignore.swp
+.project
+.swk
+.swl
+.swm
+.swn
+.swo
+.swi
+.swj
