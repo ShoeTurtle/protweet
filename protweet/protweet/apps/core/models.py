@@ -8,8 +8,8 @@ class UserProfile(models.Model):
 	follower_count = models.IntegerField(default = 0)
 	following_count = models.IntegerField(default = 0)
 	tweet_count = models.IntegerField(default = 0)
-	profile_pic = models.ImageField(upload_to = 'profile_pic')
 	user_creation_timestamp = models.DateTimeField(auto_now = False, auto_now_add = True, editable = False)
+	profile_pic = models.ImageField(upload_to = 'profile_pic', blank = True, default = '')
 	
 	def __unicode__(self):
 		return u'%s' % (self.user)

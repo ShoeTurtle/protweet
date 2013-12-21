@@ -1,0 +1,34 @@
+{% include "header_resource.html" %}
+<body>
+	<div class="container">
+		{% include "header.html" %}
+		<div class="main">
+			{% load widget_tweaks %}
+			<div class="non-field-error-wrapper">
+				{{ form.non_field_errors }}
+			</div>
+			<form class="form-signin" role="form" method="post" action="/protweet-login" enctype="multipart/form-data">
+				<h2 class="form-signin-heading">Sign In @ <span style="font-size: 15px;">Power Tweet</span><span style="font-size: 10px; padding-left: 5px;">TM.</span></h2>
+				{{ form.tweet_handle|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.tweet_handle.errors }}
+				</div>
+
+				{{ form.password|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.password.errors }}
+				</div>
+				
+				{% csrf_token %}
+				<button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top: 20px;">Sign in</button>
+			</form>
+		</div>	
+		
+		<span class="protweet-reg-login-wrapper">Don't have an account yet ? <a href="/protweet-registration">Register</a></span>
+		<div style="clear: both;"></div>
+		<div class="divider-main"></div>
+				
+		{% include "footer.html" %}
+	</div>
+</body>
+</html>

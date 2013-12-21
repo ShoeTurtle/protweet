@@ -103,6 +103,7 @@ WSGI_APPLICATION = 'protweet.wsgi.application'
 INSTALLED_APPS = (
 	'core',
 	'south',
+	'widget_tweaks',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',

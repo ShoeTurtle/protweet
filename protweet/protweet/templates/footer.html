@@ -1,0 +1,13 @@
+<footer class="clearfix">
+	<div class="main-bottom">
+		<span>Welcome {% if name %}{{ name }}{% else %}guest.{% endif %}</span><span class="sep" style="margin: 0 10px;">|</span>
+		{% if user.is_authenticated %}
+			<a href="/logout">Logout</a>
+		{% else %}
+			<a href="/">Login</a>
+		{% endif %}
+	</div>
+</footer>
+
+	<script src="/static/js/lib/bootstrap.min.js"></script>
+	<script src="/static/js/protweet.js"></script>

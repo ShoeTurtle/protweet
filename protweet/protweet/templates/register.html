@@ -1,0 +1,50 @@
+{% include "header_resource.html" %}
+<body>
+	<div class="container">
+		{% include "header.html" %}
+		<div class="main">
+			{% load widget_tweaks %}
+			<div class="non-field-error-wrapper">
+				{{ form.non_field_errors }}
+			</div>
+			<form class="form-registration" role="form" method="post" action="/protweet-registration" enctype="multipart/form-data">
+				<h2 class="form-signin-heading">Register @ <span style="font-size: 15px;">Power Tweet</span><span style="font-size: 10px; padding-left: 5px;">TM.</span></h2>
+				{{ form.name|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.name.errors }}
+				</div>
+
+				
+				{{ form.tweet_handle|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.tweet_handle.errors }}
+				</div>
+				
+				{{ form.email|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.email.errors }}
+				</div>
+				
+				{{ form.password|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.password.errors }}
+				</div>
+				
+				{{ form.re_password|add_class:"form-control" }}
+				<div class="vs-reg-lbl-error">
+					{{ form.re_password.errors }}
+				</div>
+				
+				{% csrf_token %}
+				<button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top: 20px;">Create Account</button>
+			</form>
+		</div>	
+		
+		<span class="protweet-reg-login-wrapper">I already have an account would like to <a href="/protweet-login">Login</a></span>
+		<div style="clear: both;"></div>
+		<div class="divider-main"></div>
+				
+		{% include "footer.html" %}
+	</div>
+</body>
+</html>
