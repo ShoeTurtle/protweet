@@ -30,6 +30,6 @@ class FollowingFollower(models.Model):
 	tweet_following = models.ForeignKey(UserProfile, related_name = 'tweet_following', db_index = True)
 	
 	def __unicode__(self):
-		return u'%s - %s' % (self.follower, self.following)
+		return u'%s - %s' % (self.tweet_follower, self.tweet_following)
 	
 	
