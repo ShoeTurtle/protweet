@@ -13,16 +13,14 @@
 				<div class="vs-reg-lbl-error">
 					{{ form.tweet_handle.errors }}
 				</div>
-
 				{{ form.password|add_class:"form-control" }}
 				<div class="vs-reg-lbl-error">
 					{{ form.password.errors }}
 				</div>
-				
 				{% csrf_token %}
 				<button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-top: 20px;">Sign in</button>
 			</form>
-		</div>	
+		</div>
 		
 		<span class="protweet-reg-login-wrapper">Don't have an account yet ? <a href="/protweet-registration">Register</a></span>
 		<div style="clear: both;"></div>

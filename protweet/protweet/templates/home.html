@@ -3,11 +3,44 @@
 	<div class="container">
 		{% include "header.html" %}
 		<div class="main">
-			<h1>Welcome to the home page.</h1>
-		</div>	
-		
+			<div class="main-content-wrapper">
+				<div id="sidebar-wrapper">
+					<ul class="sidebar-nav">
+						<li class="current-active"><a href="/home">Home</a></li>
+						<li><a href="/followers">Followers</a></li>
+						<li><a href="/following">Following</a></li>
+						<li><a href="#">My Tweets</a></li>
+						<li><a href="#">Settings</a></li>
+					</ul>
+				</div>
+				
+				<div class="container-right">
+					<div class="textarea-wrapper">
+						<textarea id="tweet-composer" class="form-control" rows="3" placeholder="Write your thoughts down."></textarea>
+						<button class="btn btn-primary btn-block">Post</button>
+						<span style="padding-left: 10px;">Word Count:</span> 
+						<span id="counter"></span>
+					</div>
+					
+					<div class="tweet-base-wrapper">
+						<div class="tweet-base">
+							This is a demo tweet 1
+						</div>
+						<div class="tweet-base">
+							This is a demo tweet 2
+						</div>
+						<div class="tweet-base">
+							This is a demo tweet 3
+						</div>
+						<div class="tweet-base">
+							This is a demo tweet 4
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div style="clear: both;"></div>
-		<div style="min-height: 1px; background: lightgrey; width: 100%; margin-top: 30px;"></div>
+		<div class="divider-main"></div>
 		{% include "footer.html" %}
 	</div>
 </html>

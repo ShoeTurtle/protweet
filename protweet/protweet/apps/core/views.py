@@ -123,3 +123,48 @@ def protweet_registration(request):
 		context = {'form': form}
 		
 	return render(request, 'register.html', context)
+	
+	
+def followers(request):
+	return render(request, 'followers.html')
+	
+	
+def following(request):
+	return render(request, 'following.html')
+	
+
+def post_tweet(request):
+	post = request.GET.get('tweet_post')
+	if len(post) > 200:
+		return HttpResponse({'status': 'fail'}, mimetype='application/json')
+	
+	#1. Insert the post into the database
+	try:
+		user_id = User.objects.get(username = request.user).id
+	except Exception, e:
+		print e
+		return HttpResponse({'status': 'fail'}, mimetype='application/json')
+		
+	try:
+		userprofile_record = UserProfile.objects.get(user_id = user_id)
+	except Exception, e:
+		print e
+		return HttpResponse({'status': 'fail'}, mimetype='application/json')
+		
+	try:
+		tweet_record = Tweet(tweet_userprofile_id = userprofile_record.id, parent_tweet_id = None, tweet = post)
+		tweet_record.save()
+	except Exception, e:
+		print e
+		
+	#2. Increment the tweet count
+	new_tweet_count = int(userprofile_record.tweet_count) + 1
+	userprofile_record.tweet_count = new_tweet_count
+	try:
+		userprofile_record.save()
+	except Exception, e:
+		print e
+	
+	
+	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
+	

@@ -7,4 +7,7 @@ urlpatterns = patterns('',
 	url(r'^protweet-registration/?$', views.protweet_registration),
 	url(r'^home/?$', views.home),
 	url(r'^logout/?$', views.user_logout),
+	url(r'^followers/?$', views.followers),
+	url(r'^following/?$', views.following),
+	url(r'^post-tweet/?$', views.post_tweet),
 )

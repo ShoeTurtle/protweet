@@ -1,18 +1,55 @@
 $(document).ready(function() {
-	// $('#protweet-register').click(function(e) {
-	// 	e.preventDefault();
-	// 	$('.form-signin').removeClass('form-show').addClass('form-hide');
-	// 	$('.form-registration').removeClass('form-hide').addClass('form-show');
-	// 	$('.protweet-register-wrapper').removeClass('form-show').addClass('form-hide');
-	// 	$('.protweet-login-wrapper').removeClass('form-hide').addClass('form-show');
-	// });
-	// 
-	// $('#protweet-login').click(function(e) {
-	// 	e.preventDefault();
-	// 	$('.form-signin').removeClass('form-hide').addClass('form-show');
-	// 	$('.form-registration').removeClass('form-show').addClass('form-hide');
-	// 	$('.protweet-register-wrapper').removeClass('form-hide').addClass('form-show');
-	// 	$('.protweet-login-wrapper').removeClass('form-show').addClass('form-hide');
-	// });
 
+	//tweet word count validator event bindings
+	$('#counter').text($('#tweet-composer').val().length);
+	$(document).keyup(function(e){if(e.keyCode == 8)validate_counter(200);})
+	$('#tweet-composer').keyup(function() {
+		validate_counter(200);
+	});
+	
+	//tweet post button click event
+	$('.textarea-wrapper button').click(function() {
+		var post = $('#tweet-composer').val();
+		post_tweet(post);
+	});
 });
+
+/*
+ *Validating the tweet word count constraint
+ */
+function validate_counter(max) {
+	el = $('#tweet-composer');
+	if (el.val().length > max) {
+	    el.val(el.val().substring(0, max));
+		$('#counter').text(el.val().length);
+	} else {
+		$('#counter').text(el.val().length);
+	}
+};
+
+/*
+ *Posting the tweet to the server
+ */
+function post_tweet(post) {
+	$.ajax({
+		url: '/post-tweet',
+		type: 'GET',
+		data: {
+			'tweet_post': post
+		},
+		datatype: 'json',
+		success: function(response) {
+			console.log(response);
+			if(response.status == 'ok') {
+				console.log('Post Received Successful');
+				$('#tweet-composer').val('');
+				validate_counter(200);
+			} else {
+				
+			}
+		},
+		error: function(response) {
+		
+		}
+	});
+}

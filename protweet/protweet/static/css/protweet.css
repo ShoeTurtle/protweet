@@ -53,6 +53,10 @@ header {
 	border-radius: 0px !important;
 }
 
+textarea {
+	border-radius: 0px !important;
+}
+
 .form-signin input {
 	margin-bottom: 10px;
 	border-radius: 0px !important;
@@ -115,3 +119,102 @@ header {
 	font-size: 12px;
 }
 
+.main-content-wrapper {
+	margin-top: 50px;
+}
+
+.follower-base-wrapper {
+	padding-top: 0px; margin-left: 250px;
+}
+
+.follower-base {
+	min-height: 50px;
+	padding: 10px;
+	max-width: 300px;
+/*	margin-left: 70px;*/
+/*	margin: 0 auto;*/
+	float: left;
+	margin-bottom: 0px;
+}
+
+.follower-base .well {
+	margin-bottom: 0px;
+}
+
+.tweet-base-wrapper {
+	padding-top: 130px; margin-left: 140px;
+}
+
+.textarea-wrapper {
+	float: right; margin-right: 100px;
+}
+
+.textarea-wrapper .form-control {
+	width: 350px;
+}
+
+.textarea-wrapper span {
+	/*float: right;*/ padding-top: 10px; font-size: 12px;
+}
+
+
+.tweet-base {
+	min-height: 50px;
+	padding: 10px;
+	max-width: 400px;
+	margin-left: 70px;
+	margin-bottom: 10px;
+/*	background-color: maroon;*/
+}
+
+.sidebar-nav {
+	padding-left: 0px;
+}
+
+#sidebar-wrapper {
+		float: left; margin-right: 20px;
+}
+
+#sidebar-wrapper li {
+	padding: 10px 15px 10px 15px;
+	list-style-type: none;
+	line-height: 25px;
+	font-size: 20px;
+	font-weight: 1;
+	margin-bottom: 2px;
+}
+
+#sidebar-wrapper li:hover {
+	background-color: lightgrey;
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+#sidebar-wrapper a {
+	text-decoration: none;
+	color: grey;
+}
+
+#sidebar-wrapper a:hover {
+	color: grey ;
+}
+
+#counter {
+	min-width: 50px;
+}
+
+.current-active {
+	background-color: lightgrey;
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+.textarea-wrapper button {
+	float: right; width: 80px; font-size: 12px; height: 30px; margin-top: 10px;
+}
+
+.hero-widget { text-align: center; padding-top: 20px; padding-bottom: 20px; }
+.hero-widget .icon { display: block; font-size: 96px; line-height: 96px; margin-bottom: 10px; text-align: center; }
+.hero-widget var { display: block; height: 64px; font-size: 64px; line-height: 64px; font-style: normal; }
+.hero-widget label { font-size: 17px; }
+.hero-widget .options { margin-top: 10px; }
