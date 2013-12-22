@@ -165,27 +165,37 @@ function ko_follower_following_view_model() {
 	self.ko_follow_count = ko.observable();
 	self.ko_follower_count = ko.observable();
 
-	self.ko_follow_user = function(el) {
+	self.ko_follow_user = function(user_index, el) {
 		var user_id = $(el).attr('data-id');
-		console.log('Follow Th User');
-		// $.ajax({
-		// 	type: 'GET',
-		// 	url: '/follow-user',
-		// 	data: {
-		// 		'user_id': ko_user_id
-		// 	},
-		// 	success: function(data) {
-		// 		//Adding fields into ko_follow_base
-		// 		self.ko_follow_base.push(new ko_follow({
-		// 				ko_username: ko_username, 
-		// 				ko_user_id: ko_user_id
-		// 			}
-		// 		));
-		// 	},
-		// 	error: function(data) {
-		// 		// alert('FAILS');
-		// 	}
-		// });
+		console.log('Follow User');
+		console.log(user_id);
+		$.ajax({
+			url: '/follow-user',
+			data: {
+				'user_id': user_id
+			},
+			datatype: 'json',
+			success: function(response) {
+				if (response.status == 'ok') {
+					var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Unfollow';
+					$('#following_count').html('(' + response.following_count + ')');
+					
+					console.log(JSON.stringify(response));
+
+					self.ko_following_base.push(new ko_following({
+						ko_username: response.user_info.username,
+						ko_user_id: response.user_info.user_id
+					}));
+					
+					self.ko_suggestion_base.splice(user_index, 1);
+					
+				}
+			},
+			error: function(response) {
+
+			}
+		});
+
 	}
 	
 	//Unfollowing the user
@@ -200,6 +210,15 @@ function ko_follower_following_view_model() {
 			success: function(response) {
 				if (response.status == 'ok') {
 					self.ko_following_base.splice(user_index, 1);
+					
+					$('#following_count').html('(' + response.following_count + ')');
+					
+					console.log(JSON.stringify(response));
+					
+					self.ko_suggestion_base.push(new ko_following({
+						ko_username: response.user_info.username,
+						ko_user_id: response.user_info.user_id
+					}));
 				}
 			},
 			error: function(response) {
@@ -229,6 +248,15 @@ function ko_follower_following_view_model() {
 						});
 						
 						//2. Populating ko_suggestion_base
+						response.user_base.suggestion.forEach(function(user) {
+							var username = user.user_info.username;
+							var user_id = user.user_info.user_id;
+
+							self.ko_suggestion_base.push(new ko_following({
+								ko_username: username,
+								ko_user_id: user_id
+							}));
+						});
 						
 					}
 					
@@ -267,6 +295,8 @@ function protweet_follow(user_id, el) {
 				var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Unfollow';
 				el.html(new_html);
 				el.removeClass('protweet-follow').addClass('protweet-unfollow');
+				
+				$('#following_count').html('(' + response.following_count + ')');
 			}
 		},
 		error: function(response) {
@@ -291,6 +321,8 @@ function protweet_unfollow(user_id, el) {
 				var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Follow';
 				el.html(new_html);
 				el.removeClass('protweet-unfollow').addClass('protweet-follow');
+				
+				$('#following_count').html('(' + response.following_count + ')');
 			}
 		},
 		error: function(response) {

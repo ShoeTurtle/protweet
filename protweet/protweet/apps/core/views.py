@@ -27,7 +27,19 @@ def home(request):
 		if not user_info:
 			return HttpResponseRedirect('/')
 		
+		subscribed_tweets_record = get_subscribed_tweets(user_info['userprofile_id'])
+		subscribed_tweets = []
+		for tweets in subscribed_tweets_record:
+			tmp = {}
+			user_info_tmp = get_user_details(tweets.tweet_userprofile.user)
+			tmp['user_info'] = user_info_tmp
+			tmp['tweet'] = tweets.tweet
+			tmp['post_timestamp'] = tweets.post_timestamp
+			tmp['parent_tweet_id'] = tweets.parent_tweet_id
+			subscribed_tweets.append(tmp)
+
 		user_info['home'] = True
+		user_info['subscribed_tweets'] = subscribed_tweets
 		return render(request, 'home.html', user_info)
 	
 	return HttpResponseRedirect('/')
@@ -283,7 +295,7 @@ def remove_tweet(request):
 	except Exception, e:
 		print e
 		
-		
+	
 	return HttpResponse(json.dumps(response), mimetype='application/json')
 
 
@@ -318,8 +330,14 @@ def follow_user(request):
 	except Exceptin, e:
 		print e
 		
-
-	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
+	user_info = get_user_details(following_userprofile.user)
+	
+	response = {
+		'status': 'ok',
+		'following_count': follower_userprofile.following_count,
+		'user_info': user_info
+	}
+	return HttpResponse(json.dumps(response), mimetype='application/json')
 
 
 #UnFollow a User
@@ -353,9 +371,15 @@ def unfollow_user(request):
 
 	except Exceptin, e:
 		print e
+		
+	user_info = get_user_details(following_userprofile.user)
 	
-
-	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
+	response = {
+		'status': 'ok',
+		'following_count': follower_userprofile.following_count,
+		'user_info': user_info
+	}
+	return HttpResponse(json.dumps(response), mimetype='application/json')
 	
 	
 #Get the follower data
@@ -382,8 +406,13 @@ def get_following_data(userprofile_id):
 	
 
 #Get other users whom are not followed and neither are they following back
-def get_other_users(following_list, follower_list):
-	return None
+def get_user_suggestion(filter_list):
+	print filter_list
+	suggested_record = UserProfile.objects.all().exclude(id__in=filter_list)
+	
+	print suggested_record
+	
+	return suggested_record
 
 
 #Get user base data for following-follower
@@ -395,12 +424,16 @@ def get_user_base(request):
 	follower_record = get_follower_data(user_info['userprofile_id'])
 	following_record = get_following_data(user_info['userprofile_id'])
 	
+	filter_list = []
+	filter_list.append(user_info['userprofile_id'])
+
 	#1. Get the users whom i follow
 	following_tmp = []
 	for record in following_record:
 		tmp = {}
 		user_info = get_user_details(record.tweet_following)
 		tmp['user_info'] = user_info
+		filter_list.append(user_info['userprofile_id'])
 		following_tmp.append(tmp)
 		
 	#2. Get the users who follow me
@@ -409,16 +442,26 @@ def get_user_base(request):
 		tmp = {}
 		user_info = get_user_details(record.tweet_follower)
 		tmp['user_info'] = user_info
+		filter_list.append(user_info['userprofile_id'])
 		follower_tmp.append(tmp)
 		
 		
 	#3. Get all users who i don't follow and they don't follow me as suggestion for potential follows
-		
+	suggestion_record = get_user_suggestion(filter_list)
+	suggestion_tmp = []
+	for record in suggestion_record:
+		tmp = {}
+		user_info = get_user_details(record.user)
+		tmp['user_info'] = user_info
+		suggestion_tmp.append(tmp)
+
 
 	user_base = {}
 	user_base['following'] = following_tmp
 	user_base['follower'] = follower_tmp
-	user_base['suggestion'] = None
+	user_base['suggestion'] = suggestion_tmp
+	
+	print user_base
 	
 	response = {
 		'status': 'ok',
@@ -429,4 +472,23 @@ def get_user_base(request):
 		
 		
 		
+#Get all the tweets from the user that i am following
+def get_subscribed_tweets(userprofile_id):
+	#Get all the user profiles that i follow
+	following_record = get_following_data(userprofile_id)
+	filter_list = []
+	
+	#1. Get the users whom i follow
+	for record in following_record:
+		user_info = get_user_details(record.tweet_following)
+		filter_list.append(user_info['userprofile_id'])
+	
+	try:
+		tweet_record = Tweet.objects.filter(tweet_userprofile_id__in = filter_list).order_by('-post_timestamp')
+	except Exception, e:
+		print e
+		return None
+		
+	return tweet_record
+	
 		
