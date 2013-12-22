@@ -12,4 +12,7 @@ urlpatterns = patterns('',
 	url(r'^post-tweet/?$', views.post_tweet),
 	url(r'^user-tweets/?$', views.user_tweets),
 	url(r'^remove-tweet/?$', views.remove_tweet),
+	url(r'^follow-user/?$', views.follow_user),
+	url(r'^get-user-base/?$', views.get_user_base),
+	url(r'^unfollow-user/?$', views.unfollow_user)
 )

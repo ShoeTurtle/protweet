@@ -11,7 +11,7 @@
 				<div class="container-right">
 					<div class="tweet-base-wrapper user-tweet-base">
 						{% for tweet_info in user_tweet %}
-						<div class="tweet-base" style="background-color: lightgrey;">
+						<div class="tweet-base">
 							<span class="post-timestamp">{{ tweet_info.post_timestamp|date:'D d M Y' }}</span>
 							<div class="my-tweet-wrapper">
 								{{ tweet_info.tweet }}

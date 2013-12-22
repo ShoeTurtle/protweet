@@ -2,6 +2,10 @@
 
 $(document).ready(function() {
 
+	//applying knockout binding to our viewmodel
+	my = {viewModel: new ko_follower_following_view_model()}
+	ko.applyBindings(my.viewModel);
+
 	//tweet word count validator event bindings
 	if ($('#tweet-composer').val() != undefined) {
 		$('#counter').text($('#tweet-composer').val().length || 0)
@@ -109,4 +113,127 @@ function remove_tweet(tweet_id, el) {
 			
 		}
 	});
+}
+
+
+/*
+ *Knockout-follower-following
+ */
+
+//constructor for the following base
+function ko_following(data) {
+	var self = this;
+
+	self.ko_username = ko.observable(data.ko_username);
+	self.ko_user_id = ko.observable(data.ko_user_id);
+}
+
+//constructor for the follower base
+function ko_follower(data) {
+	var self = this;
+	
+	self.ko_username = ko.observable(data.ko_username);
+	self.ko_user_id = ko-observable(data.ko_user_id);
+}
+
+//knockout view model
+function ko_follower_following_view_model() {
+	self = this;
+	
+	self.ko_follower_base = ko.observableArray([]); //Holds all the users that follow me
+	self.ko_following_base = ko.observableArray([]); //Holds all the users that i follow
+	self.ko_suggestion_base = ko.observableArray([]); //This is the list of users that i can follow
+
+	//Properties of each user
+	self.ko_username = ko.observable();
+	self.ko_user_id = ko.observable();
+	self.ko_follow_count = ko.observable();
+	self.ko_follower_count = ko.observable();
+
+	self.ko_follow_user = function(el) {
+		var user_id = $(el).attr('data-id');
+		console.log('Follow Th User');
+		// $.ajax({
+		// 	type: 'GET',
+		// 	url: '/follow-user',
+		// 	data: {
+		// 		'user_id': ko_user_id
+		// 	},
+		// 	success: function(data) {
+		// 		//Adding fields into ko_follow_base
+		// 		self.ko_follow_base.push(new ko_follow({
+		// 				ko_username: ko_username, 
+		// 				ko_user_id: ko_user_id
+		// 			}
+		// 		));
+		// 	},
+		// 	error: function(data) {
+		// 		// alert('FAILS');
+		// 	}
+		// });
+	}
+	
+	//Unfollowing the user
+	self.ko_unfollow_user = function(user_index, el) {
+		var user_id = $(el).attr('data-id');
+		$.ajax({
+			url: '/unfollow-user',
+			data: {
+				'user_id': user_id
+			},
+			datatype: 'json',
+			success: function(response) {
+				if (response.status == 'ok') {
+					self.ko_following_base.splice(user_index, 1);
+				}
+			},
+			error: function(response) {
+				
+			}
+		});
+		
+	}
+
+	//Loading the initial set of data from the server
+	self.ko_initialize = function(el, base) {
+		$.ajax({
+			url: '/get-user-base',
+			success: function(response) {
+				if (response.status == 'ok') {
+					
+					if (base == 'following_base') {
+						//1. Populating ko_following_base
+						response.user_base.following.forEach(function(user) {
+							var username = user.user_info.username;
+							var user_id = user.user_info.user_id;
+
+							self.ko_following_base.push(new ko_following({
+								ko_username: username,
+								ko_user_id: user_id
+							}));
+						});
+						
+						//2. Populating ko_suggestion_base
+						
+					}
+
+				} else {
+					
+				}
+			},
+			error: function(response) {
+				
+			}
+		});
+	}
+}
+
+
+/*
+ *Document onload event for the Following template
+ */
+function init_following() {
+	//1. Get the list of follower and following data
+	//2. Initialize the respective ko_observable array
+	$('#trigger_following_base').click();
 }

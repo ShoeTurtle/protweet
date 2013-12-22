@@ -118,7 +118,7 @@ def protweet_registration(request):
 	return render(request, 'register.html', context)
 	
 	
-#Tweet Follower
+#Tweet Follower - Template Rendering
 def followers(request):
 	user_info = get_user_details(request.user)
 	if not user_info:
@@ -128,7 +128,7 @@ def followers(request):
 	return render(request, 'followers.html', user_info)
 	
 	
-#Tweet Following
+#Tweet Following - Template Rendering
 def following(request):
 
 	user_info = get_user_details(request.user)
@@ -199,7 +199,7 @@ def get_user_details(username):
 	#building the user_info
 	user_info = {}
 	user_info['user_id'] = user_record.id
-	user_info['username'] = username
+	user_info['username'] = user_record.username
 	user_info['name'] = user_record.first_name
 	user_info['email'] = user_record.email
 	user_info['userprofile_id'] = userprofile_record.id
@@ -254,3 +254,102 @@ def remove_tweet(request):
 		
 	return HttpResponse(json.dumps(response), mimetype='application/json')
 	
+
+
+#Follow a User
+def follow_user(request):
+	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
+	
+#UnFollow a User
+def unfollow_user(request):
+	following_user_id = request.GET.get('user_id')
+	
+	try:
+		following_userprofile_id = UserProfile.objects.get(user_id = following_user_id).id
+		follower_userprofile_id = UserProfile.objects.get(user = request.user).id
+		
+	except Exception, e:
+		print e
+		
+	try:
+		followingfollower_record = FollowingFollower.objects.filter(tweet_follower_id = int(follower_userprofile_id)).filter(tweet_following_id = following_userprofile_id)
+		followingfollower_record.delete()
+	except Exception, e:
+		print e
+		return HttpResponse(json.dumps({'status': 'fail'}), mimetype='application/json')
+
+	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
+	
+	
+#Get the follower data
+def get_follower_data(userprofile_id):
+	try:
+		follower_record = FollowingFollower.objects.filter(tweet_follower_id = userprofile_id)
+	except Exception, e:
+		print e
+		return None
+		
+	return follower_record
+	
+	
+#Get the following data
+def get_following_data(userprofile_id):
+	try:
+		print userprofile_id
+		following_data = FollowingFollower.objects.filter(tweet_follower_id = userprofile_id)
+	except Exception, e:
+		print e
+		return None
+		
+	return following_data
+	
+
+#Get other users whom are not followed and neither are they following back
+def get_other_users():
+	return None
+
+
+#Get user base data for following-follower
+def get_user_base(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/')
+		
+	user_info = get_user_details(request.user)
+	# follower_record = get_follower_data(user_info['userprofile_id'])
+	following_record = get_following_data(user_info['userprofile_id'])
+	
+	print 'Following Record'
+	following_tmp = []
+	for record in following_record:
+		tmp = {}
+		user_info = get_user_details(record.tweet_following)
+		tmp['user_info'] = user_info
+		following_tmp.append(tmp)
+		
+		
+	user_base = {}
+	user_base['following'] = following_tmp
+	
+	print user_base
+	
+	response = {
+		'status': 'ok',
+		'user_base': user_base
+	}
+	
+	return HttpResponse(json.dumps(response), mimetype="application/json")
+	
+			
+
+		
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

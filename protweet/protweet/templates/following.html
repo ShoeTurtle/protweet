@@ -1,5 +1,5 @@
 {% include "header_resource.html" %}
-</body>
+<body onload="init_following();">
 	<div class="container">
 		{% include "header.html" %}
 		<div class="main">
@@ -9,56 +9,68 @@
 				</div>
 				<div class="container-right">
 					<div class="follower-base-wrapper">
-						<div class="follower-base">
-							<div class="well well-sm">
-								<div class="media">
-									<!-- <a class="thumbnail pull-left" href="#">
-										<img class="media-object" src="http://critterapp.pagodabox.com/img/user.jpg">
-									</a> -->
-									<div class="media-body">
-										<h4 class="media-heading">First Last Name</h4>
-										<p><span class="label label-info">888 photos</span> <span class="label label-warning">150 followers</span></p>
-										<p>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-comment"></span> Message</a>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-heart"></span> Favorite</a>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
-										</p>
+						<h5>My Follow Base.</h5>
+
+						<a id="trigger_following_base" href="#" data-bind="{click: function(data){ko_initialize($element, 'following_base')}}"></a>
+
+						<div data-bind="foreach: ko_following_base">
+							<div class="follower-base">
+								<div class="well well-sm">
+									<div class="media">
+										<div class="media-body">
+											<h4 class="media-heading" data-bind="text: ko_username"></h4>
+											<p>
+												<span class="label label-info">888 photos</span> 
+												<span class="label label-warning">150 followers</span>
+											</p>
+											<p>
+												<a href="#" class="btn btn-xs btn-default">
+													<span class="glyphicon glyphicon-comment"></span> 
+													Message
+												</a>
+												<a href="#" class="btn btn-xs btn-default">
+													<span class="glyphicon glyphicon-heart"></span> 
+													Favorite
+												</a>
+												<a href="#" class="btn btn-xs btn-default" data-bind="{click: $parent.ko_unfollow_user.bind($data, $index(), $element), attr: {'data-id': ko_user_id}}">
+													<span class="glyphicon glyphicon-ban-circle"></span> 
+													Unfollow
+												</a>
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="follower-base">
-							<div class="well well-sm">
-								<div class="media">
-									<!-- <a class="thumbnail pull-left" href="#">
-										<img class="media-object" src="http://critterapp.pagodabox.com/img/user.jpg">
-									</a> -->
-									<div class="media-body">
-										<h4 class="media-heading">First Last Name</h4>
-										<p><span class="label label-info">888 photos</span> <span class="label label-warning">150 followers</span></p>
-										<p>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-comment"></span> Message</a>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-heart"></span> Favorite</a>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="follower-base">
-							<div class="well well-sm">
-								<div class="media">
-									<!-- <a class="thumbnail pull-left" href="#">
-										<img class="media-object" src="http://critterapp.pagodabox.com/img/user.jpg">
-									</a> -->
-									<div class="media-body">
-										<h4 class="media-heading">First Last Name</h4>
-										<p><span class="label label-info">888 photos</span> <span class="label label-warning">150 followers</span></p>
-										<p>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-comment"></span> Message</a>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-heart"></span> Favorite</a>
-											<a href="#" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-ban-circle"></span> Unfollow</a>
-										</p>
+
+						<div style="clear: both"></div>
+						<h5>Follow More - Share More - <span>You many find these people interesting.</span></h5>
+
+						<div data-bind="foreach: ko_suggestion_base">
+							<div class="follower-base">
+								<div class="well well-sm">
+									<div class="media">
+										<div class="media-body">
+											<h4 class="media-heading" data-bind="text: ko_username"></h4>
+											<p>
+												<span class="label label-info">888 photos</span> 
+												<span class="label label-warning">150 followers</span>
+											</p>
+											<p>
+												<a href="#" class="btn btn-xs btn-default">
+													<span class="glyphicon glyphicon-comment"></span> 
+													Message
+												</a>
+												<a href="#" class="btn btn-xs btn-default">
+													<span class="glyphicon glyphicon-heart"></span> 
+													Favorite
+												</a>
+												<a href="#" class="btn btn-xs btn-default">
+													<span class="glyphicon glyphicon-ban-circle"></span> 
+													Follows
+												</a>
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -71,4 +83,5 @@
 		<div class="divider-main"></div>
 		{% include "footer.html" %}
 	</div>
+</body>
 </html>
