@@ -29,6 +29,10 @@
 								{{ tweet_info.tweet }}
 							</div>
 							<span style="font-size: 11px;">@ {{ tweet_info.user_info.username }}</span>
+							<a href="#" data-tweet-id="{{ tweet_info.tweet_id }}" class="btn btn-xs btn-default pro-retweet" style="float: right;">
+								Retweet
+							</a>
+							
 						</div>
 						{% endfor %}
 					</div>

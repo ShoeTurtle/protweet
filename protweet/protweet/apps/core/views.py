@@ -36,6 +36,7 @@ def home(request):
 			tmp['tweet'] = tweets.tweet
 			tmp['post_timestamp'] = tweets.post_timestamp
 			tmp['parent_tweet_id'] = tweets.parent_tweet_id
+			tmp['tweet_id'] = tweets.id
 			subscribed_tweets.append(tmp)
 
 		user_info['home'] = True
@@ -491,4 +492,38 @@ def get_subscribed_tweets(userprofile_id):
 		
 	return tweet_record
 	
+
+#Retweeting the tweet
+def pro_retweet(request):
+	tweet_id = request.GET.get('tweet_id')
+	user_info = get_user_details(request.user)
+	if not user_info:
+		return HttpResponse(json.dumps({'status': 'fail'}), mimetype="application/json")
+	
+	if tweet_id:
+		try:
+			post = Tweet.objects.get(id = tweet_id).tweet
+			tweet_record = Tweet(tweet_userprofile_id = user_info['userprofile_id'], parent_tweet_id = tweet_id, tweet = post)
+			tweet_record.save()
+		except Exception, e:
+			print e
+			return HttpResponse(json.dumps({'status': 'fail'}), mimetype="application/json")
 		
+		try:
+			userprofile_record = UserProfile.objects.get(id = user_info['userprofile_id'])
+			new_tweet_count = int(userprofile_record.tweet_count) + 1
+			userprofile_record.tweet_count = new_tweet_count
+			userprofile_record.save()
+		except Exception, e:
+			print e
+			
+		response = {
+			'status': 'ok',
+			'tweet_count': new_tweet_count
+		}
+		return HttpResponse(json.dumps(response), mimetype='application/json')
+	else:
+		return HttpResponse(json.dumps({'status': 'fail'}), mimetype="application/json")
+		
+	
+	

@@ -16,5 +16,5 @@ urlpatterns = patterns('',
 	url(r'^get-user-base/?$', views.get_user_base),
 	url(r'^unfollow-user/?$', views.unfollow_user),
 	url(r'^follow-user/?$', views.follow_user),
-
+	url(r'^pro-retweet/?$', views.pro_retweet),
 )
