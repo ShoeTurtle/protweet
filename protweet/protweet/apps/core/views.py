@@ -123,11 +123,42 @@ def followers(request):
 	user_info = get_user_details(request.user)
 	if not user_info:
 		return HttpResponseRedirect('/')
+		
+	#1. Get the users who follow me
+	follower_record_follow_me = get_follower_data(user_info['userprofile_id'])
+	print 'These are the users who follow me'
+	print follower_record_follow_me
+	
+	#2. Get all the users who i follow
+	follower_record_i_follow = get_following_data(user_info['userprofile_id'])
+	print 'These are the users who i follow'
+	print follower_record_i_follow
+	
+	#3. Get the user details who follow me
+	follower_tmp = []
+	for record in follower_record_follow_me:
+		tmp = {}
+		user_info_following = get_user_details(record.tweet_follower)
+		tmp['user_info'] = user_info_following
+		tmp['do_i_follow'] = check_following(follower_record_i_follow, user_info_following['userprofile_id']) #Check if i follow this user
+		follower_tmp.append(tmp)
 	
 	user_info['followers'] = True
+	user_info['follower_base'] = follower_tmp
 	return render(request, 'followers.html', user_info)
 	
 	
+
+#Check if i follow the given userprofile_id
+def check_following(follower_record_i_follow, userprofile_id):
+	for record in follower_record_i_follow:
+		if (int(record.tweet_following_id)) == (int(userprofile_id)):
+			return True
+		else:
+			return False
+
+	
+
 #Tweet Following - Template Rendering
 def following(request):
 
@@ -253,13 +284,30 @@ def remove_tweet(request):
 		
 		
 	return HttpResponse(json.dumps(response), mimetype='application/json')
-	
+
 
 
 #Follow a User
 def follow_user(request):
+	following_user_id = request.GET.get('user_id')
+	
+	try:
+		following_userprofile_id = UserProfile.objects.get(user_id = following_user_id).id
+		follower_userprofile_id = UserProfile.objects.get(user = request.user).id
+	except Exception, e:
+		print e
+		
+	try:
+		followingfollower_record = FollowingFollower(tweet_follower_id = follower_userprofile_id, tweet_following_id = following_userprofile_id)
+		followingfollower_record.save()
+	except Exception, e:
+		print e
+		return HttpResponse(json.dumps({'status': 'fail'}), mimetype='application/json')
+
 	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
 	
+
+
 #UnFollow a User
 def unfollow_user(request):
 	following_user_id = request.GET.get('user_id')
@@ -284,7 +332,7 @@ def unfollow_user(request):
 #Get the follower data
 def get_follower_data(userprofile_id):
 	try:
-		follower_record = FollowingFollower.objects.filter(tweet_follower_id = userprofile_id)
+		follower_record = FollowingFollower.objects.filter(tweet_following_id = userprofile_id)
 	except Exception, e:
 		print e
 		return None
@@ -305,7 +353,7 @@ def get_following_data(userprofile_id):
 	
 
 #Get other users whom are not followed and neither are they following back
-def get_other_users():
+def get_other_users(following_list, follower_list):
 	return None
 
 
@@ -315,10 +363,10 @@ def get_user_base(request):
 		return HttpResponseRedirect('/')
 		
 	user_info = get_user_details(request.user)
-	# follower_record = get_follower_data(user_info['userprofile_id'])
+	follower_record = get_follower_data(user_info['userprofile_id'])
 	following_record = get_following_data(user_info['userprofile_id'])
 	
-	print 'Following Record'
+	#1. Get the users whom i follow
 	following_tmp = []
 	for record in following_record:
 		tmp = {}
@@ -326,11 +374,22 @@ def get_user_base(request):
 		tmp['user_info'] = user_info
 		following_tmp.append(tmp)
 		
+	#2. Get the users who follow me
+	follower_tmp = []
+	for record in follower_record:
+		tmp = {}
+		user_info = get_user_details(record.tweet_follower)
+		tmp['user_info'] = user_info
+		follower_tmp.append(tmp)
 		
+		
+	#3. Get all users who i don't follow and they don't follow me as suggestion for potential follows
+		
+
 	user_base = {}
 	user_base['following'] = following_tmp
-	
-	print user_base
+	user_base['follower'] = follower_tmp
+	user_base['suggestion'] = None
 	
 	response = {
 		'status': 'ok',
@@ -338,17 +397,6 @@ def get_user_base(request):
 	}
 	
 	return HttpResponse(json.dumps(response), mimetype="application/json")
-	
-			
-
-		
-	
-		
-		
-		
-		
-		
-		
 		
 		
 		

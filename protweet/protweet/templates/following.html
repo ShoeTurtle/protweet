@@ -24,15 +24,7 @@
 												<span class="label label-warning">150 followers</span>
 											</p>
 											<p>
-												<a href="#" class="btn btn-xs btn-default">
-													<span class="glyphicon glyphicon-comment"></span> 
-													Message
-												</a>
-												<a href="#" class="btn btn-xs btn-default">
-													<span class="glyphicon glyphicon-heart"></span> 
-													Favorite
-												</a>
-												<a href="#" class="btn btn-xs btn-default" data-bind="{click: $parent.ko_unfollow_user.bind($data, $index(), $element), attr: {'data-id': ko_user_id}}">
+												<a href="#" class="btn btn-xs btn-default" data-bind="{click: $parent.ko_unfollow_user.bind($data, $index(), $element), attr: {'data-id': ko_user_id}}" style="float: right;">
 													<span class="glyphicon glyphicon-ban-circle"></span> 
 													Unfollow
 												</a>

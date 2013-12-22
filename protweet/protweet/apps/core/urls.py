@@ -14,5 +14,6 @@ urlpatterns = patterns('',
 	url(r'^remove-tweet/?$', views.remove_tweet),
 	url(r'^follow-user/?$', views.follow_user),
 	url(r'^get-user-base/?$', views.get_user_base),
-	url(r'^unfollow-user/?$', views.unfollow_user)
+	url(r'^unfollow-user/?$', views.unfollow_user),
+	url(r'^follow-user/?$', views.unfollow_user),
 )

@@ -35,6 +35,21 @@ $(document).ready(function() {
 		var tweet_id = el.attr('data-tweet-id');
 		remove_tweet(tweet_id, el);
 	});
+	
+	$('.protweet-follow').click(function() {
+		var user_id = $(this).attr('data-id');
+		var el = $(this);
+		
+		protweet_follow(user_id, el);
+
+	});
+	
+	$('.protweet-unfollow').click(function() {
+		var user_id = $(this).attr('data-id')
+		var el = $(this);
+		
+		protweet_unfollow(user_id, el);
+	})
 });
 
 /*
@@ -216,7 +231,7 @@ function ko_follower_following_view_model() {
 						//2. Populating ko_suggestion_base
 						
 					}
-
+					
 				} else {
 					
 				}
@@ -233,7 +248,53 @@ function ko_follower_following_view_model() {
  *Document onload event for the Following template
  */
 function init_following() {
-	//1. Get the list of follower and following data
-	//2. Initialize the respective ko_observable array
 	$('#trigger_following_base').click();
+}
+
+
+/*
+ *Following a user
+ */
+function protweet_follow(user_id, el) {
+	$.ajax({
+		url: '/follow-user',
+		data: {
+			'user_id': user_id
+		},
+		datatype: 'json',
+		success: function(response) {
+			if (response.status == 'ok') {
+				var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Unfollow';
+				el.html(new_html);
+				el.removeClass('protweet-follow').addClass('protweet-unfollow');
+			}
+		},
+		error: function(response) {
+			
+		}
+	});
+}
+
+
+/*
+ *Unfollow a user
+ */
+function protweet_unfollow(user_id, el) {
+	$.ajax({
+		url: '/unfollow-user',
+		data: {
+			'user_id': user_id
+		},
+		datatype: 'json',
+		success: function(response) {
+			if (response.status == 'ok') {
+				var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Follow';
+				el.html(new_html);
+				el.removeClass('protweet-unfollow').addClass('protweet-follow');
+			}
+		},
+		error: function(response) {
+			
+		}
+	});	
 }
