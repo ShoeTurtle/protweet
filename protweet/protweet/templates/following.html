@@ -20,12 +20,15 @@
 										<div class="media-body">
 											<h4 class="media-heading" data-bind="text: ko_username"></h4>
 											<p>
-												<span class="label label-info">888 photos</span> 
-												<span class="label label-warning">150 followers</span>
+												<span class="label label-info" data-bind="text: ko_follow_count"></span>
+												<span style="font-size: 10px;">Following</span> 
+												<span class="label label-info" data-bind="text: ko_follower_count"></span>
+												<span style="font-size: 10px;">Follower</span>
+												<span class="label label-warning" data-bind="text: ko_tweet_count"></span>
+												<span style="font-size: 10px;">Tweet</span>
 											</p>
 											<p>
 												<a href="#" class="btn btn-xs btn-default" data-bind="{click: $parent.ko_unfollow_user.bind($data, $index(), $element), attr: {'data-id': ko_user_id}}" style="float: right;">
-													<span class="glyphicon glyphicon-ban-circle"></span> 
 													Unfollow
 												</a>
 											</p>
@@ -43,14 +46,17 @@
 								<div class="well well-sm">
 									<div class="media">
 										<div class="media-body">
-											<h4 class="media-heading" data-bind="text: ko_username"></h4>
+											<h4 class="media-heading" data-bind="text: ko_username" style="margin-botto: 10px;"></h4>
 											<p>
-												<span class="label label-info">888 photos</span> 
-												<span class="label label-warning">150 followers</span>
+												<span class="label label-info" data-bind="text: ko_follow_count"></span>
+												<span style="font-size: 10px;">Following</span> 
+												<span class="label label-info" data-bind="text: ko_follower_count"></span>
+												<span style="font-size: 10px;">Follower</span>
+												<span class="label label-warning" data-bind="text: ko_tweet_count"></span>
+												<span style="font-size: 10px;">Tweet</span>
 											</p>
 											<p>
 												<a href="#" class="btn btn-xs btn-default" style="float: right;" data-bind="{click: $parent.ko_follow_user.bind($data, $index(), $element), attr: {'data-id': ko_user_id}}">
-													<span class="glyphicon glyphicon-ban-circle"></span> 
 													Follow
 												</a>
 											</p>

@@ -19,18 +19,20 @@
 									<div class="media-body">
 										<h4 class="media-heading">{{ user.user_info.username }}</h4>
 										<p>
-											<span class="label label-info">888 photos</span> 
-											<span class="label label-warning">150 followers</span>
+											<span class="label label-info">{{ user.user_info.following_count }}</span>
+											<span style="font-size: 10px;">Following</span> 
+											<span class="label label-info">{{ user.user_info.follower_count }}</span>
+											<span style="font-size: 10px;">Follower</span>
+											<span class="label label-warning">{{ user.user_info.tweet_count }}</span>
+											<span style="font-size: 10px;">Tweet</span>
 										</p>
 										<p>
 											{% if user.do_i_follow %}
 											<a href="#" class="btn btn-xs btn-default protweet-unfollow" data-id = "{{ user.user_info.user_id }}" style="float: right;">
-												<span class="glyphicon glyphicon-ban-circle"></span> 
 												Unfollow
 											</a>
 											{% else %}
 											<a href="#" class="btn btn-xs btn-default protweet-follow" data-id = "{{ user.user_info.user_id }}" style="float: right;">
-												<span class="glyphicon glyphicon-ban-circle"></span> 
 												Follow
 											</a>
 											{% endif %}

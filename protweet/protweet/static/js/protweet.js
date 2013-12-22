@@ -1,4 +1,5 @@
 //ProTweet Custom js//
+var COUNT_MAX = 200;
 
 $(document).ready(function() {
 
@@ -11,9 +12,9 @@ $(document).ready(function() {
 		$('#counter').text($('#tweet-composer').val().length || 0)
 	} 
 	
-	$(document).keyup(function(e){if(e.keyCode == 8)validate_counter(200);})
+	$(document).keyup(function(e){if(e.keyCode == 8)validate_counter(COUNT_MAX);})
 	$('#tweet-composer').keyup(function() {
-		validate_counter(200);
+		validate_counter(COUNT_MAX);
 	});
 	
 	//tweet post button click event
@@ -54,7 +55,8 @@ $(document).ready(function() {
 	})
 	
 	//retweet event
-	$('.pro-retweet').click(function() {
+	$('.pro-retweet').click(function(e) {
+		e.preventDefault();
 		var tweet_id = $(this).attr('data-tweet-id');
 		pro_retweet(tweet_id);
 	});
@@ -100,7 +102,7 @@ function post_tweet(post) {
 		success: function(response) {
 			if(response.status == 'ok') {
 				$('#tweet-composer').val(''); //clearing the tweet textarea
-				validate_counter(200);
+				validate_counter(validate_counter);
 				$('#tweet_count').html('(' + response.tweet_count + ')'); //updating the tweet count
 				
 			} else {
@@ -149,6 +151,9 @@ function ko_following(data) {
 
 	self.ko_username = ko.observable(data.ko_username);
 	self.ko_user_id = ko.observable(data.ko_user_id);
+	self.ko_follow_count = ko.observable(data.ko_follow_count)
+	self.ko_follower_count = ko.observable(data.ko_follower_count)
+	self.ko_tweet_count = ko.observable(data.ko_tweet_count)
 }
 
 //knockout view model
@@ -178,14 +183,17 @@ function ko_follower_following_view_model() {
 			datatype: 'json',
 			success: function(response) {
 				if (response.status == 'ok') {
-					var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Unfollow';
+					var new_html = 'Unfollow';
 					$('#following_count').html('(' + response.following_count + ')');
 					
 					console.log(JSON.stringify(response));
 
 					self.ko_following_base.push(new ko_following({
 						ko_username: response.user_info.username,
-						ko_user_id: response.user_info.user_id
+						ko_user_id: response.user_info.user_id,
+						ko_follow_count: response.user_info.following_count,
+						ko_follower_count: response.user_info.follower_count,
+						ko_tweet_count: response.user_info.tweet_count
 					}));
 					
 					self.ko_suggestion_base.splice(user_index, 1);
@@ -218,7 +226,10 @@ function ko_follower_following_view_model() {
 					
 					self.ko_suggestion_base.push(new ko_following({
 						ko_username: response.user_info.username,
-						ko_user_id: response.user_info.user_id
+						ko_user_id: response.user_info.user_id,
+						ko_follow_count: response.user_info.following_count,
+						ko_follower_count: response.user_info.follower_count,
+						ko_tweet_count: response.user_info.tweet_count
 					}));
 				}
 			},
@@ -239,23 +250,25 @@ function ko_follower_following_view_model() {
 					if (base == 'following_base') {
 						//1. Populating ko_following_base
 						response.user_base.following.forEach(function(user) {
-							var username = user.user_info.username;
-							var user_id = user.user_info.user_id;
 
 							self.ko_following_base.push(new ko_following({
-								ko_username: username,
-								ko_user_id: user_id
+								ko_username: user.user_info.username,
+								ko_user_id: user.user_info.user_id,
+								ko_follow_count: user.user_info.following_count,
+								ko_follower_count: user.user_info.follower_count,
+								ko_tweet_count: user.user_info.tweet_count
 							}));
 						});
 						
 						//2. Populating ko_suggestion_base
 						response.user_base.suggestion.forEach(function(user) {
-							var username = user.user_info.username;
-							var user_id = user.user_info.user_id;
 
 							self.ko_suggestion_base.push(new ko_following({
-								ko_username: username,
-								ko_user_id: user_id
+								ko_username: user.user_info.username,
+								ko_user_id: user.user_info.user_id,
+								ko_follow_count: user.user_info.following_count,
+								ko_follower_count: user.user_info.follower_count,
+								ko_tweet_count: user.user_info.tweet_count
 							}));
 						});
 						
@@ -293,7 +306,8 @@ function protweet_follow(user_id, el) {
 		datatype: 'json',
 		success: function(response) {
 			if (response.status == 'ok') {
-				var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Unfollow';
+				//'<span class="glyphicon glyphicon-ban-circle"></span>
+				var new_html = 'Unfollow';
 				el.html(new_html);
 				el.removeClass('protweet-follow').addClass('protweet-unfollow');
 				
@@ -319,7 +333,8 @@ function protweet_unfollow(user_id, el) {
 		datatype: 'json',
 		success: function(response) {
 			if (response.status == 'ok') {
-				var new_html = '<span class="glyphicon glyphicon-ban-circle"></span>Follow';
+				//<span class="glyphicon glyphicon-ban-circle"></span>
+				var new_html = 'Follow';
 				el.html(new_html);
 				el.removeClass('protweet-unfollow').addClass('protweet-follow');
 				

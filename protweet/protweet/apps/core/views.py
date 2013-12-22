@@ -153,23 +153,23 @@ def followers(request):
 		tmp = {}
 		user_info_following = get_user_details(record.tweet_follower)
 		tmp['user_info'] = user_info_following
-		tmp['do_i_follow'] = check_following(follower_record_i_follow, user_info_following['userprofile_id']) #Check if i follow this user
+		tmp['do_i_follow'] = check_following(follower_record_i_follow, user_info_following['username']) #Check if i follow this user
 		follower_tmp.append(tmp)
 	
 	user_info['followers'] = True
 	user_info['follower_base'] = follower_tmp
+	print 'Check This Out'
+	print follower_tmp
 	return render(request, 'followers.html', user_info)
 	
 	
 
 #Check if i follow the given userprofile_id
-def check_following(follower_record_i_follow, userprofile_id):
+def check_following(follower_record_i_follow, username):
 	for record in follower_record_i_follow:
-		if (int(record.tweet_following_id)) == (int(userprofile_id)):
+		user_info = get_user_details(record.tweet_following)
+		if not cmp(username, user_info['username']):
 			return True
-		else:
-			return False
-
 	
 
 #Tweet Following - Template Rendering
@@ -263,12 +263,27 @@ def user_tweets(request):
 		
 	#Query all the tweet for this user
 	try:
-		tweet_record = Tweet.objects.values('id', 'parent_tweet_id', 'tweet', 'post_timestamp').filter(tweet_userprofile_id = user_info['userprofile_id']).order_by('-post_timestamp')
+		# tweet_record = Tweet.objects.values('id', 'parent_tweet_id', 'tweet', 'post_timestamp', 'tweet_userprofile_id').filter(tweet_userprofile_id = user_info['userprofile_id']).order_by('-post_timestamp')
+		tweet_record = Tweet.objects.filter(tweet_userprofile_id = user_info['userprofile_id']).order_by('-post_timestamp')
 	except Exception, e:
 		print e
 
-	user_info['user_tweet'] = tweet_record
-	
+	tweet_list = []
+	for record in tweet_record:
+		tmp = {}
+		tmp['id'] = record.id
+		tmp['tweet'] = record.tweet
+		tmp['post_timestamp'] = record.post_timestamp
+		tmp['tweet_userprofile_id'] = record.tweet_userprofile_id
+		tmp['parent_tweet_id'] = record.parent_tweet_id
+
+		if record.parent_tweet_id:
+			user_info_xtra = get_user_details(record.tweet_userprofile.user)
+			tmp['user_info_xtra'] = user_info_xtra
+
+		tweet_list.append(tmp)
+
+	user_info['user_tweet'] = tweet_list
 	print user_info
 	
 	user_info['user_tweets'] = True

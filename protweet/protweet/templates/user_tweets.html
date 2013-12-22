@@ -16,7 +16,11 @@
 							<div class="my-tweet-wrapper">
 								{{ tweet_info.tweet }}
 							</div>
+							
 							<a data-tweet-id="{{ tweet_info.id }}" class="remove-tweet" href="#" style="font-size: 11px;">Remove</a>
+							{% if tweet_info.user_info_xtra %}
+								<span style="font-size: 11px; float: right;">@ Retweet</span>
+							{% endif %}
 						</div>
 						{% endfor %}
 					</div>
