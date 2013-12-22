@@ -1,0 +1,7 @@
+<ul class="sidebar-nav">
+	<li {% if home %}class="current-active"{% endif %}><a href="/home">Home</a></li>
+	<li {% if followers %}class="current-active"{% endif %}><a href="/followers">Followers <span id="follower_count" class="tweet-stats">({{follower_count}})</span></a></li>
+	<li {% if following %}class="current-active"{% endif %}><a href="/following">Following <span id="following_count" class="tweet-stats">({{following_count}})</span></a></li>
+	<li {% if user_tweets %}class="current-active"{% endif %}><a href="/user-tweets">My Tweets <span id="tweet_count" class="tweet-stats">({{tweet_count}})</span></a></li>
+	<li><a href="#">Settings</a></li>
+</ul>

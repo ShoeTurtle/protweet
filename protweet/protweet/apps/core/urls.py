@@ -10,4 +10,6 @@ urlpatterns = patterns('',
 	url(r'^followers/?$', views.followers),
 	url(r'^following/?$', views.following),
 	url(r'^post-tweet/?$', views.post_tweet),
+	url(r'^user-tweets/?$', views.user_tweets),
+	url(r'^remove-tweet/?$', views.remove_tweet),
 )

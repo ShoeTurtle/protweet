@@ -18,27 +18,20 @@ from django.db.models import Count
 from core.models import UserProfile, Tweet, FollowingFollower
 from core.forms import ProTweetLoginForm, ProTweetRegistrationForm
 
-
 #ProTwitter Home
 def home(request):
 	user_info = {}
 	if request.user.is_authenticated():
-		print request.user
-		try:
-			user_record = User.objects.get(username = request.user)
-		except Exception, e:
-			print 'Unable to query User'
-			print e
-			return HttpResponseRedirect('/')
 
-		user_info['username'] = request.user
-		user_info['name'] = user_record.first_name
+		user_info = get_user_details(request.user)
+		if not user_info:
+			return HttpResponseRedirect('/')
 		
+		user_info['home'] = True
 		return render(request, 'home.html', user_info)
 	
 	return HttpResponseRedirect('/')
 	
-
 #Login View
 def protweet_login(request):
 	if request.method == 'POST':
@@ -102,7 +95,7 @@ def protweet_registration(request):
 			except Exception, e:
 				print 'Unable to Initialize UserProfile'
 				print e
-				#ToDo: Clear the previous failed user from db
+				#ToDo: Remove the previous failed user from db
 				return HttpResponseRedirect('/')
 				
 			#3. Authentication User
@@ -125,14 +118,28 @@ def protweet_registration(request):
 	return render(request, 'register.html', context)
 	
 	
+#Tweet Follower
 def followers(request):
-	return render(request, 'followers.html')
+	user_info = get_user_details(request.user)
+	if not user_info:
+		return HttpResponseRedirect('/')
+	
+	user_info['followers'] = True
+	return render(request, 'followers.html', user_info)
 	
 	
+#Tweet Following
 def following(request):
-	return render(request, 'following.html')
+
+	user_info = get_user_details(request.user)
+	if not user_info:
+		return HttpResponseRedirect('/')
+	
+	user_info['following'] = True
+	return render(request, 'following.html', user_info)
 	
 
+#Adding tweet to the database
 def post_tweet(request):
 	post = request.GET.get('tweet_post')
 	if len(post) > 200:
@@ -165,6 +172,85 @@ def post_tweet(request):
 	except Exception, e:
 		print e
 	
+	response = {
+		'status': 'ok',
+		'tweet_count': new_tweet_count
+	}
+	return HttpResponse(json.dumps(response), mimetype='application/json')
 	
-	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
+	
+	
+#Get the user details
+def get_user_details(username):
+	try:
+		user_record = User.objects.get(username = username)
+	except Exception, e:
+		print 'Unable to query User'
+		print e
+		return None
+		
+	try:
+		userprofile_record = UserProfile.objects.get(user_id = user_record.id)
+	except Exception, e:
+		print 'Unable to query UserProfile'
+		print e
+		return None
+
+	#building the user_info
+	user_info = {}
+	user_info['user_id'] = user_record.id
+	user_info['username'] = username
+	user_info['name'] = user_record.first_name
+	user_info['email'] = user_record.email
+	user_info['userprofile_id'] = userprofile_record.id
+	user_info['tweet_count'] = userprofile_record.tweet_count
+	user_info['follower_count'] = userprofile_record.follower_count
+	user_info['following_count'] = userprofile_record.following_count
+	
+	return user_info
+	
+	
+#Render all the user_tweets
+def user_tweets(request):
+	user_info = get_user_details(request.user)
+	
+	if not user_info:
+		return HttpResponseRedirect('/')
+		
+	#Query all the tweet for this user
+	try:
+		tweet_record = Tweet.objects.values('id', 'parent_tweet_id', 'tweet', 'post_timestamp').filter(tweet_userprofile_id = user_info['userprofile_id']).order_by('-post_timestamp')
+	except Exception, e:
+		print e
+
+	user_info['user_tweet'] = tweet_record
+	
+	print user_info
+	
+	user_info['user_tweets'] = True
+	return render(request, 'user_tweets.html', user_info)
+	
+	
+#Removing tweet from the database
+def remove_tweet(request):
+	tweet_id = request.GET.get('tweet_id')
+	
+	try:
+		tweet_record = Tweet.objects.get(id = tweet_id)
+		tweet_record.delete()
+		response = {'status': 'ok'}
+	except Exception, e:
+		print e
+		response = {'status': 'fail'}
+		
+	try:
+		userprofile_record = UserProfile.objects.get(user = request.user)
+		userprofile_record.tweet_count -= 1
+		userprofile_record.save()
+		response['tweet_count'] = userprofile_record.tweet_count
+	except Exception, e:
+		print e
+		
+		
+	return HttpResponse(json.dumps(response), mimetype='application/json')
 	

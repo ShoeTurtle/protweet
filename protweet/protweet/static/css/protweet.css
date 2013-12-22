@@ -146,11 +146,11 @@ textarea {
 }
 
 .textarea-wrapper {
-	float: right; margin-right: 100px;
+	float: right; margin-right: 200px;
 }
 
 .textarea-wrapper .form-control {
-	width: 350px;
+	width: 400px;
 }
 
 .textarea-wrapper span {
@@ -165,6 +165,14 @@ textarea {
 	margin-left: 70px;
 	margin-bottom: 10px;
 /*	background-color: maroon;*/
+}
+
+.user-tweet-base {
+	padding-top: 0px;
+}
+
+.user-tweet-base .tweet-base {
+	max-width: 550px;
 }
 
 .sidebar-nav {
@@ -212,6 +220,29 @@ textarea {
 .textarea-wrapper button {
 	float: right; width: 80px; font-size: 12px; height: 30px; margin-top: 10px;
 }
+
+.lbl-thoughts-wrapper{
+	min-height: 20px;
+}
+
+.lbl-thoughts-hide {
+	display: none;
+}
+
+.lbl-thoughts-show {
+	display: block;
+}
+
+.post-timestamp {
+	font-size: 10px;
+	float: right;
+}
+
+.tweet-stats {
+	font-size: 12px;
+}
+
+
 
 .hero-widget { text-align: center; padding-top: 20px; padding-bottom: 20px; }
 .hero-widget .icon { display: block; font-size: 96px; line-height: 96px; margin-bottom: 10px; text-align: center; }

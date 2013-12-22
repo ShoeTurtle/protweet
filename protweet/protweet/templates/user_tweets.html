@@ -1,0 +1,30 @@
+{% include "header_resource.html" %}
+</body>
+	<div class="container">
+		{% include "header.html" %}
+		<div class="main">
+			<div class="main-content-wrapper">
+				<div id="sidebar-wrapper">
+					{% include "side_menu.html" %}
+				</div>
+				
+				<div class="container-right">
+					<div class="tweet-base-wrapper user-tweet-base">
+						{% for tweet_info in user_tweet %}
+						<div class="tweet-base" style="background-color: lightgrey;">
+							<span class="post-timestamp">{{ tweet_info.post_timestamp|date:'D d M Y' }}</span>
+							<div class="my-tweet-wrapper">
+								{{ tweet_info.tweet }}
+							</div>
+							<a data-tweet-id="{{ tweet_info.id }}" class="remove-tweet" href="#" style="font-size: 11px;">Remove</a>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="clear: both;"></div>
+		<div class="divider-main"></div>
+		{% include "footer.html" %}
+	</div>
+</html>

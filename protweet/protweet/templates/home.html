@@ -5,17 +5,16 @@
 		<div class="main">
 			<div class="main-content-wrapper">
 				<div id="sidebar-wrapper">
-					<ul class="sidebar-nav">
-						<li class="current-active"><a href="/home">Home</a></li>
-						<li><a href="/followers">Followers</a></li>
-						<li><a href="/following">Following</a></li>
-						<li><a href="#">My Tweets</a></li>
-						<li><a href="#">Settings</a></li>
-					</ul>
+					{% include "side_menu.html" %}
 				</div>
 				
 				<div class="container-right">
 					<div class="textarea-wrapper">
+						<div class="lbl-thoughts-wrapper">
+							<div class="vs-reg-lbl-error lbl-thoughts-hide">
+								Your thoughts seem to be empty!!
+							</div>
+						</div>
 						<textarea id="tweet-composer" class="form-control" rows="3" placeholder="Write your thoughts down."></textarea>
 						<button class="btn btn-primary btn-block">Post</button>
 						<span style="padding-left: 10px;">Word Count:</span> 
@@ -23,7 +22,7 @@
 					</div>
 					
 					<div class="tweet-base-wrapper">
-						<div class="tweet-base">
+						<!-- <div class="tweet-base">
 							This is a demo tweet 1
 						</div>
 						<div class="tweet-base">
@@ -34,7 +33,7 @@
 						</div>
 						<div class="tweet-base">
 							This is a demo tweet 4
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
