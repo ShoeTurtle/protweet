@@ -279,6 +279,7 @@ def remove_tweet(request):
 		userprofile_record.tweet_count -= 1
 		userprofile_record.save()
 		response['tweet_count'] = userprofile_record.tweet_count
+				
 	except Exception, e:
 		print e
 		
@@ -292,20 +293,33 @@ def follow_user(request):
 	following_user_id = request.GET.get('user_id')
 	
 	try:
-		following_userprofile_id = UserProfile.objects.get(user_id = following_user_id).id
-		follower_userprofile_id = UserProfile.objects.get(user = request.user).id
+		following_userprofile = UserProfile.objects.get(user_id = following_user_id)
+		follower_userprofile = UserProfile.objects.get(user = request.user)
+		 
+		following_userprofile_id = following_userprofile.id
+		follower_userprofile_id = follower_userprofile.id
 	except Exception, e:
 		print e
 		
 	try:
 		followingfollower_record = FollowingFollower(tweet_follower_id = follower_userprofile_id, tweet_following_id = following_userprofile_id)
 		followingfollower_record.save()
+		
 	except Exception, e:
 		print e
 		return HttpResponse(json.dumps({'status': 'fail'}), mimetype='application/json')
+		
+	try:
+		following_userprofile.follower_count += 1
+		following_userprofile.save()
+		
+		follower_userprofile.following_count += 1
+		follower_userprofile.save()
+	except Exceptin, e:
+		print e
+		
 
 	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
-	
 
 
 #UnFollow a User
@@ -313,8 +327,11 @@ def unfollow_user(request):
 	following_user_id = request.GET.get('user_id')
 	
 	try:
-		following_userprofile_id = UserProfile.objects.get(user_id = following_user_id).id
-		follower_userprofile_id = UserProfile.objects.get(user = request.user).id
+		following_userprofile = UserProfile.objects.get(user_id = following_user_id)
+		follower_userprofile = UserProfile.objects.get(user = request.user)
+		
+		following_userprofile_id = following_userprofile.id
+		follower_userprofile_id = follower_userprofile.id
 		
 	except Exception, e:
 		print e
@@ -325,6 +342,18 @@ def unfollow_user(request):
 	except Exception, e:
 		print e
 		return HttpResponse(json.dumps({'status': 'fail'}), mimetype='application/json')
+		
+		
+	try:
+		following_userprofile.follower_count -= 1
+		following_userprofile.save()
+
+		follower_userprofile.following_count -= 1
+		follower_userprofile.save()
+
+	except Exceptin, e:
+		print e
+	
 
 	return HttpResponse(json.dumps({'status': 'ok'}), mimetype='application/json')
 	
