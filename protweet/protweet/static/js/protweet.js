@@ -1,5 +1,6 @@
 //ProTweet Custom js//
 var COUNT_MAX = 200;
+var my = {};
 
 $(document).ready(function() {
 
@@ -241,7 +242,7 @@ function ko_follower_following_view_model() {
 	}
 
 	//Loading the initial set of data from the server
-	self.ko_initialize = function(el, base) {
+	self.ko_initialize = function(base) {
 		$.ajax({
 			url: '/get-user-base',
 			success: function(response) {
@@ -291,6 +292,7 @@ function ko_follower_following_view_model() {
  */
 function init_following() {
 	$('#trigger_following_base').click();
+	my.viewModel.ko_initialize('following_base');
 }
 
 
