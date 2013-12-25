@@ -606,7 +606,10 @@ def push_tweet_to_followers(tweet_poster):
 		
 		url = 'http://localhost:3000/tweet-feed?tweet_id=' + tweet_id + '&tweet_feed=' + tweet_feed + '&username=' + user_info_following['username'] + '&posted_by=' + username
 		print url
-		requests.post(url)
+		try:
+			requests.post(url)
+		except Exception, e:
+			print e
 		
 	return
 
