@@ -23,6 +23,18 @@
 					</div>
 					<div style="clear: both;"></div>
 					<div class="tweet-base-wrapper user-tweet-base">
+
+						<div data-bind="foreach: ko_tweet_feed">
+							<div class="tweet-base">
+								<span class="post-timestamp">Dec 25 2013</span>
+								<div class="my-tweet-wrapper" data-bind="text: ko_tweet_post"></div>
+								<span style="font-size: 11px;">@ <span data-bind="text: ko_posted_by"></span></span>
+								<a href="#" class="btn btn-xs btn-default pro-retweet" style="float: right;" data-bind="attr: {'data-tweet-id': ko_tweet_id}">
+									Retweet
+								</a>
+							</div>
+						</div>
+						
 						{% for tweet_info in subscribed_tweets %}
 						<div class="tweet-base">
 							<span class="post-timestamp">{{ tweet_info.post_timestamp|date:'D d M Y' }}</span>
@@ -33,7 +45,6 @@
 							<a href="#" data-tweet-id="{{ tweet_info.tweet_id }}" class="btn btn-xs btn-default pro-retweet" style="float: right;">
 								Retweet
 							</a>
-							
 						</div>
 						{% endfor %}
 					</div>

@@ -56,11 +56,12 @@ $(document).ready(function() {
 	})
 	
 	//retweet event
-	$('.pro-retweet').click(function(e) {
+	$('.tweet-base-wrapper').on('click', '.pro-retweet', function(e) {
 		e.preventDefault();
 		var tweet_id = $(this).attr('data-tweet-id');
 		pro_retweet(tweet_id);
 	});
+		
 });
 
 /*
@@ -103,7 +104,7 @@ function post_tweet(post) {
 		success: function(response) {
 			if(response.status == 'ok') {
 				$('#tweet-composer').val(''); //clearing the tweet textarea
-				validate_counter(validate_counter);
+				validate_counter();
 				$('#tweet_count').html('(' + response.tweet_count + ')'); //updating the tweet count
 				
 			} else {
@@ -152,9 +153,19 @@ function ko_following(data) {
 
 	self.ko_username = ko.observable(data.ko_username);
 	self.ko_user_id = ko.observable(data.ko_user_id);
-	self.ko_follow_count = ko.observable(data.ko_follow_count)
-	self.ko_follower_count = ko.observable(data.ko_follower_count)
-	self.ko_tweet_count = ko.observable(data.ko_tweet_count)
+	self.ko_follow_count = ko.observable(data.ko_follow_count);
+	self.ko_follower_count = ko.observable(data.ko_follower_count);
+	self.ko_tweet_count = ko.observable(data.ko_tweet_count);
+}
+
+//constructor for tweet feed
+function ko_tweet(data) {
+	var self = this;
+	
+	self.ko_tweet_id = ko.observable(data.ko_tweet_id);
+	self.ko_tweet_post = ko.observable(data.ko_tweet_post);
+	self.ko_posted_by = ko.observable(data.ko_posted_by);
+	self.ko_timestamp = ko.observable(data.ko_timestamp);
 }
 
 //knockout view model
@@ -164,6 +175,7 @@ function ko_follower_following_view_model() {
 	self.ko_follower_base = ko.observableArray([]); //Holds all the users that follow me
 	self.ko_following_base = ko.observableArray([]); //Holds all the users that i follow
 	self.ko_suggestion_base = ko.observableArray([]); //This is the list of users that i can follow
+	self.ko_tweet_feed = ko.observableArray([]); //Holds the tweet feed to be displayed
 
 	//Properties of each user
 	self.ko_username = ko.observable();
@@ -172,6 +184,19 @@ function ko_follower_following_view_model() {
 	self.ko_follower_count = ko.observable();
 	self.ko_tweet_count = ko.observable();
 
+
+	//Tweet feed show
+	self.ko_push_tweet_feed = function(tweet_feed) {
+		self.ko_tweet_feed.push(new ko_tweet({
+			ko_tweet_id: tweet_feed.tweet_id,
+			ko_tweet_post: tweet_feed.tweet_feed,
+			ko_posted_by: tweet_feed.posted_by,
+			ko_timestamp: ''
+		}));
+	};
+
+
+	//Follow a user
 	self.ko_follow_user = function(user_index, el) {
 		var user_id = $(el).attr('data-id');
 		console.log('Follow User');
@@ -206,7 +231,7 @@ function ko_follower_following_view_model() {
 			}
 		});
 
-	}
+	};
 	
 	//Unfollowing the user
 	self.ko_unfollow_user = function(user_index, el) {
@@ -239,7 +264,7 @@ function ko_follower_following_view_model() {
 			}
 		});
 		
-	}
+	};
 
 	//Loading the initial set of data from the server
 	self.ko_initialize = function(base) {
@@ -283,7 +308,7 @@ function ko_follower_following_view_model() {
 				
 			}
 		});
-	}
+	};
 }
 
 

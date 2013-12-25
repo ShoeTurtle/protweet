@@ -17,4 +17,6 @@ urlpatterns = patterns('',
 	url(r'^unfollow-user/?$', views.unfollow_user),
 	url(r'^follow-user/?$', views.follow_user),
 	url(r'^pro-retweet/?$', views.pro_retweet),
+	
+	url(r'^validate-user/?$', views.validate_user)
 )

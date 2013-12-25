@@ -1,6 +1,6 @@
 import datetime, base64
 import simplejson as json
-import requests, urllib
+import requests
 import json, re, uuid
 import smtplib, os
 
@@ -17,6 +17,11 @@ from django.db.models import Count
 
 from core.models import UserProfile, Tweet, FollowingFollower
 from core.forms import ProTweetLoginForm, ProTweetRegistrationForm
+
+from django.conf import settings
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, load_backend
+from django.contrib.auth.models import AnonymousUser
+
 
 #ProTwitter Home
 def home(request):
@@ -215,6 +220,17 @@ def post_tweet(request):
 		userprofile_record.save()
 	except Exception, e:
 		print e
+	
+	
+	#3. Get all the users that follow this tweet and broadcast it to Node
+	tweet_poster = {
+		'tweet_id': tweet_record.id,
+		'userprofile_id': userprofile_record.id,
+		'tweet': post,
+		'username': str(request.user)
+	}	
+	push_tweet_to_followers(tweet_poster)
+	
 	
 	response = {
 		'status': 'ok',
@@ -540,5 +556,58 @@ def pro_retweet(request):
 	else:
 		return HttpResponse(json.dumps({'status': 'fail'}), mimetype="application/json")
 		
+
+#Validating the user from the node server
+def validate_user(request):
+	session_id = request.GET.get('session_id')
+	print session_id
+	protweet_user = user_from_session_key(session_id)
+
+	response = {
+		'user': str(protweet_user)
+	}
+
+	return HttpResponse(json.dumps(response), mimetype="application/json")
+
+
+#Retrieve user from django session id
+def user_from_session_key(session_key):
+	try:
+		session_engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
+		session_wrapper = session_engine.SessionStore(session_key)
+		user_id = session_wrapper.get(SESSION_KEY)
+		auth_backend = load_backend(session_wrapper.get(BACKEND_SESSION_KEY))
+	except Exception, e:
+		print e
+		return AnonymousUser()
+
+	if user_id and auth_backend:
+		return auth_backend.get_user(user_id)
+	else:
+		return AnonymousUser()
+		
+		
+#Push live tweet feeds to the followers
+def push_tweet_to_followers(tweet_poster):
+
+	userprofile_id = tweet_poster['userprofile_id']
+	tweet_id = str(tweet_poster['tweet_id'])
+	tweet_feed = tweet_poster['tweet']
+	username = tweet_poster['username']
+
+	#1. Get the users who follow me
+	follower_record_follow_me = get_follower_data(userprofile_id)
+	print 'These are the users who follow me'
+	print follower_record_follow_me
 	
-	
+	#2. Get the user details who follow me
+	for record in follower_record_follow_me:
+		user_info_following = get_user_details(record.tweet_follower)
+		
+		url = 'http://localhost:3000/tweet-feed?tweet_id=' + tweet_id + '&tweet_feed=' + tweet_feed + '&username=' + user_info_following['username'] + '&posted_by=' + username
+		print url
+		requests.post(url)
+		
+	return
+
+
