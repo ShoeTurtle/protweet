@@ -26,7 +26,7 @@
 
 						<div data-bind="foreach: ko_tweet_feed">
 							<div class="tweet-base">
-								<span class="post-timestamp">Dec 25 2013</span>
+								<span class="post-timestamp" data-bind="text: ko_timestamp"></span>
 								<div class="my-tweet-wrapper" data-bind="text: ko_tweet_post"></div>
 								<span style="font-size: 11px;">@ <span data-bind="text: ko_posted_by"></span></span>
 								<a href="#" class="btn btn-xs btn-default pro-retweet" style="float: right;" data-bind="attr: {'data-tweet-id': ko_tweet_id}">

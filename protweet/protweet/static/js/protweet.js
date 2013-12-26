@@ -191,7 +191,7 @@ function ko_follower_following_view_model() {
 			ko_tweet_id: tweet_feed.tweet_id,
 			ko_tweet_post: tweet_feed.tweet_feed,
 			ko_posted_by: tweet_feed.posted_by,
-			ko_timestamp: ''
+			ko_timestamp: tweet_feed.timestamp
 		}));
 	};
 

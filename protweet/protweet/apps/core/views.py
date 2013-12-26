@@ -1,9 +1,9 @@
-import datetime, base64
+import base64
 import simplejson as json
 import requests
 import json, re, uuid
 import smtplib, os
-
+from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -21,6 +21,9 @@ from core.forms import ProTweetLoginForm, ProTweetRegistrationForm
 from django.conf import settings
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, load_backend
 from django.contrib.auth.models import AnonymousUser
+
+from django.utils.dateformat import DateFormat
+from django.utils.formats import get_format
 
 
 #ProTwitter Home
@@ -223,14 +226,16 @@ def post_tweet(request):
 	
 	
 	#3. Get all the users that follow this tweet and broadcast it to Node
+	dateformat = DateFormat(datetime.now())
 	tweet_poster = {
 		'tweet_id': tweet_record.id,
 		'userprofile_id': userprofile_record.id,
 		'tweet': post,
-		'username': str(request.user)
+		'username': str(request.user),
+		'timestamp': DateFormat(datetime.now()).format('D d M Y')
 	}	
+
 	push_tweet_to_followers(tweet_poster)
-	
 	
 	response = {
 		'status': 'ok',
@@ -594,6 +599,7 @@ def push_tweet_to_followers(tweet_poster):
 	tweet_id = str(tweet_poster['tweet_id'])
 	tweet_feed = tweet_poster['tweet']
 	username = tweet_poster['username']
+	timestamp = tweet_poster['timestamp']
 
 	#1. Get the users who follow me
 	follower_record_follow_me = get_follower_data(userprofile_id)
@@ -604,7 +610,7 @@ def push_tweet_to_followers(tweet_poster):
 	for record in follower_record_follow_me:
 		user_info_following = get_user_details(record.tweet_follower)
 		
-		url = 'http://localhost:3000/tweet-feed?tweet_id=' + tweet_id + '&tweet_feed=' + tweet_feed + '&username=' + user_info_following['username'] + '&posted_by=' + username
+		url = 'http://localhost:3000/tweet-feed?tweet_id=' + tweet_id + '&tweet_feed=' + tweet_feed + '&username=' + user_info_following['username'] + '&posted_by=' + username + '&timestamp=' + timestamp
 		print url
 		try:
 			requests.post(url)
